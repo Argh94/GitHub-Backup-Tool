@@ -34,29 +34,73 @@ Try the tool live at: [https://Argh94.github.io/GitHub-Backup-Tool/](https://Arg
 
 ---
 
-## 🛠️ Installation and Setup
+---
 
-### Prerequisites
-- A modern web browser (Chrome, Firefox, Safari, etc.)
-- A GitHub account (optional, for testing with your own repositories)
-- A Cloudflare account for deploying the Worker (optional, if you want to host your own proxy)
+## 📖 Usage
 
-### Steps
-1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/Argh94/GitHub-Backup-Tool.git
-   cd GitHub-Backup-Tool
-https://argh94.github.io/GitHub-Backup-Tool/
-2. Host Locally (Optional):
-- Use a local server (e.g., Live Server in VS Code or python -m http.server 8000) to test the project locally.
-- Open index.html in your browser.
+1. Open the tool in your browser (via GitHub Pages or locally).
+2. Enter a GitHub username in the input field.
+3. Click **Check Public Repositories** to list all public repositories.
+4. Use the search bar to filter repositories.
+5. Click **Download All Repositories** to download all repositories as a single ZIP file, or download individual repositories using the download button next to each.
 
-3. Deploy to GitHub Pages:
-- Push the repository to GitHub.
-- Go to Settings > Pages in your repository.
-- Select the main branch and save. The site will be available at https://Argh94.github.io/GitHub-Backup-Tool/.
+---
 
-4. Set Up Cloudflare Worker (Optional):
-- Create a Cloudflare Worker using the provided script in the repository (worker.js).
-- Deploy the Worker and update the WORKER_URL in js/download.js to your Worker’s URL (e.g., https://git-zip.tahmasebimoein140.workers.dev/).
-  
+## 🔧 Technologies Used
+
+- **HTML5**: For the structure of the web page.
+- **CSS3**: For styling, including dark/light themes and responsive design.
+- **JavaScript**: For interacting with the GitHub API and handling downloads.
+- **GitHub API**: To fetch public repository data.
+- **Cloudflare Workers**: To proxy ZIP downloads and bypass CORS restrictions.
+- **Font Awesome**: For icons.
+- **Google Fonts**: For `Vazir` (Persian) and `Roboto`/`IBM Plex Mono` (English) fonts.
+
+---
+
+## ⚙️ Configuration
+
+To customize the tool:
+
+1. **Change Worker URL**:
+   - Update the `WORKER_URL` in `js/download.js` to point to your Cloudflare Worker.
+   - Example:
+     ```javascript
+     const WORKER_URL = "https://git-zip.tahmasebimoein140.workers.dev/";
+     ```
+
+2. **Modify Styles**:
+   - Edit `css/style.css` to change colors, fonts, or layouts.
+
+3. **Add Translations**:
+   - Update `js/lang.js` to add support for additional languages.
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! To contribute:
+
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature/your-feature`).
+3. Make your changes and commit (`git commit -m "Add your feature"`).
+4. Push to the branch (`git push origin feature/your-feature`).
+5. Open a Pull Request.
+
+Please follow the [Code of Conduct](CODE_OF_CONDUCT.md).
+
+---
+
+## 📜 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+## 🙏 Acknowledgments
+
+- [GitHub API](https://docs.github.com/en/rest) for providing repository data.
+- [Cloudflare Workers](https://workers.cloudflare.com/) for enabling seamless downloads.
+- [Font Awesome](https://fontawesome.com/) for icons.
+- [Google Fonts](https://fonts.google.com/) for typography.
+- 
