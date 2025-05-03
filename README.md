@@ -103,4 +103,17 @@ This project is licensed under the [MIT License](LICENSE).
 - [Cloudflare Workers](https://workers.cloudflare.com/) for enabling seamless downloads.
 - [Font Awesome](https://fontawesome.com/) for icons.
 - [Google Fonts](https://fonts.google.com/) for typography.
-- 
+
+---
+
+## 📬 Contact
+
+For questions or feedback, reach out to:
+- GitHub: [Argh94](https://github.com/Argh94)
+- Email: [your-email@example.com](mailto:your-email@example.com)
+
+---
+
+# ابزار بکاپ مخازن عمومی GitHub
+
+ابزاری ساده و زیبا برای نمایش و بکاپ مخازن عمومی GitHub به‌صورت فایل ZIP. این پروژه با HTML، CSS و جاوااسکریپت ساخته شده و از API GitHub و یک Worker سفارشی Cloudflare برای دانلود مخازن استفاده می‌کند.
