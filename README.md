@@ -1,5 +1,6 @@
 # GitHub Public Repository Backup Tool
 
+![Visitor Count](https://komarev.com/ghpvc/?username=Argh94&GitHub-Backup-Tool&label=ProfileViews)
 ![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?logo=github)
 ![License](https://img.shields.io/badge/License-MIT-blue)
 ![Version](https://img.shields.io/badge/Version-1.0.0-green)
