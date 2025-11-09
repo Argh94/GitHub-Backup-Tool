@@ -698,6 +698,63 @@ h3 {
     color: var(--light-blue);
 }
 
+/* انیمیشن هایلایت ریپو */
+.highlight-repo {
+    background: linear-gradient(135deg, rgba(255, 235, 59, 0.25), rgba(255, 193, 7, 0.15)) !important;
+    border: 2px solid #ffeb3b !important;
+    border-radius: 12px !important;
+    box-shadow: 
+        0 0 20px rgba(255, 235, 59, 0.6),
+        0 0 40px rgba(255, 193, 7, 0.3) !important;
+    transform: scale(1.02) !important;
+    animation: highlightPulse 2s ease-in-out;
+    position: relative;
+    z-index: 10;
+}
+
+.highlight-repo::before {
+    content: '';
+    position: absolute;
+    top: -2px; left: -2px; right: -2px; bottom: -2px;
+    background: linear-gradient(45deg, #ffeb3b, #ffc107, #ff9800, #ffeb3b);
+    border-radius: 14px;
+    z-index: -1;
+    animation: borderGlow 2s infinite alternate;
+    opacity: 0.7;
+}
+
+@keyframes highlightPulse {
+    0% { 
+        transform: scale(1); 
+        box-shadow: 0 0 10px rgba(255, 235, 59, 0.4);
+    }
+    50% { 
+        transform: scale(1.04); 
+        box-shadow: 0 0 35px rgba(255, 235, 59, 0.8);
+    }
+    100% { 
+        transform: scale(1); 
+        box-shadow: 0 0 10px rgba(255, 235, 59, 0.4);
+    }
+}
+
+@keyframes borderGlow {
+    0% { opacity: 0.5; }
+    100% { opacity: 0.9; }
+}
+
+.light-theme .highlight-repo {
+    background: linear-gradient(135deg, rgba(255, 245, 0, 0.3), rgba(255, 193, 7, 0.2)) !important;
+    border: 2px solid #ffc107 !important;
+    box-shadow: 
+        0 0 20px rgba(255, 193, 7, 0.5),
+        0 0 30px rgba(255, 152, 0, 0.3) !important;
+}
+
+.light-theme .highlight-repo::before {
+    background: linear-gradient(45deg, #ffc107, #ff9800, #ff5722, #ffc107);
+}
+
 @keyframes loading {
     0% { left: -30%; }
     50% { left: 100%; }
