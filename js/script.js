@@ -109,7 +109,7 @@ async function checkRepositories() {
         
         setupSearchField(repos.length);
         
-        displayRepositories(repos);
+        displayRepositories(repos, username); // پاس دادن username
         
         downloadAllButton.style.display = 'flex';
         clearButton.style.display = 'flex';
@@ -135,6 +135,35 @@ function updateUserAvatar(avatarUrl) {
     }
 }
 
+// تابع جدید: نرمال‌سازی و تشخیص owner/repo
+function parseRepoFromInput(input) {
+    if (!input) return null;
+    
+    let cleaned = input.trim();
+    
+    cleaned = cleaned.replace(/^https?:\/\//i, '');
+    cleaned = cleaned.replace(/^www\./i, '');
+    cleaned = cleaned.replace(/^github\.com[/]?/i, '');
+    cleaned = cleaned.replace(/\/+$/, '');
+    
+    if (cleaned.includes('/')) {
+        const parts = cleaned.split('/').filter(p => p);
+        if (parts.length >= 2) {
+            return {
+                owner: parts[0].toLowerCase(),
+                repo: parts[1].toLowerCase(),
+                full: `${parts[0]}/${parts[1]}`
+            };
+        }
+    }
+    
+    return {
+        owner: null,
+        repo: cleaned.toLowerCase(),
+        full: cleaned
+    };
+}
+
 function setupSearchField(repoCount) {
     const searchContainer = document.getElementById('searchContainer');
     const searchInput = document.getElementById('searchInput');
@@ -148,7 +177,7 @@ function setupSearchField(repoCount) {
         clearTimeout(timeoutId);
         
         timeoutId = setTimeout(() => {
-            const searchTerm = this.value.toLowerCase();
+            const searchTerm = this.value;
             filterRepositories(searchTerm);
         }, 300);
     });
@@ -156,33 +185,81 @@ function setupSearchField(repoCount) {
 
 function filterRepositories(searchTerm) {
     const repoItems = document.querySelectorAll('.repo-item');
-    let visibleCount = 0; 
+    let visibleCount = 0;
+    let foundExactMatch = false;
+    let exactMatchElement = null;
+
+    const parsed = parseRepoFromInput(searchTerm);
     
     repoItems.forEach(item => {
         const repoName = item.querySelector('.repo-name-container').textContent.toLowerCase();
+        const ownerName = item.dataset.owner?.toLowerCase() || '';
         const repoDesc = item.querySelector('.repo-description')?.textContent.toLowerCase() || '';
         const repoLang = item.querySelector('.repo-language')?.textContent.toLowerCase() || '';
-        
-        if (repoName.includes(searchTerm) || 
-            repoDesc.includes(searchTerm) || 
-            repoLang.includes(searchTerm)) {
+        const fullName = `${ownerName}/${repoName}`;
+
+        item.classList.remove('highlight-repo');
+
+        let matches = false;
+
+        // جستجوی دقیق owner/repo
+        if (parsed.owner && parsed.repo) {
+            if (ownerName === parsed.owner && repoName === parsed.repo) {
+                matches = true;
+                foundExactMatch = true;
+                exactMatchElement = item;
+            }
+        } else if (!parsed.owner && repoName === parsed.repo) {
+            // فقط نام ریپو
+            matches = true;
+            foundExactMatch = true;
+            exactMatchElement = item;
+        } else {
+            // جستجوی معمولی
+            const term = searchTerm.toLowerCase();
+            if (repoName.includes(term) || 
+                fullName.includes(term) ||
+                repoDesc.includes(term) || 
+                repoLang.includes(term) || 
+                ownerName.includes(term)) {
+                matches = true;
+            }
+        }
+
+        if (matches) {
             item.style.display = 'flex';
             visibleCount++;
+            if (foundExactMatch && item === exactMatchElement) {
+                item.classList.add('highlight-repo');
+                item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         } else {
             item.style.display = 'none';
         }
     });
-    
+
+    // حذف هایلایت بعد 2 ثانیه
+    if (exactMatchElement) {
+        setTimeout(() => {
+            exactMatchElement.classList.remove('highlight-repo');
+        }, 2000);
+    }
+
+    // پیام نتیجه
     const noResultsMessage = document.getElementById('no-results-message');
-    if (visibleCount === 0 && searchTerm) {
+    if (visibleCount === 0) {
+        const msg = parsed.owner 
+            ? translations[document.documentElement.lang || 'en'].repoNotFound.replace('{repo}', parsed.full)
+            : translations[document.documentElement.lang || 'en'].noResults.replace('{term}', searchTerm || 'جستجو');
+        
         if (!noResultsMessage) {
             const message = document.createElement('p');
             message.id = 'no-results-message';
             message.className = 'terminal-intro';
-            message.innerHTML = translations[document.documentElement.lang || 'en'].noResults.replace('{term}', searchTerm);
+            message.innerHTML = msg;
             document.getElementById('repoList').appendChild(message);
         } else {
-            noResultsMessage.innerHTML = translations[document.documentElement.lang || 'en'].noResults.replace('{term}', searchTerm);
+            noResultsMessage.innerHTML = msg;
             noResultsMessage.style.display = 'block';
         }
     } else if (noResultsMessage) {
@@ -190,7 +267,7 @@ function filterRepositories(searchTerm) {
     }
 }
 
-function displayRepositories(repos) {
+function displayRepositories(repos, username) {
     const repoListEl = document.getElementById('repoList');
     const lang = document.documentElement.lang || 'en';
     
@@ -209,7 +286,7 @@ function displayRepositories(repos) {
         const language = repo.language || translations[lang].notSpecified;
         
         repoHtml += `
-            <div class="repo-item">
+            <div class="repo-item" data-owner="${username}">
                 <div>
                     <div class="repo-name-container" title="${repoName}">${repoName}</div>
                     <div class="repo-description" title="${repoDescription}">${repoDescription}</div>
@@ -277,7 +354,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const languageToggle = document.getElementById('language-toggle');
     const body = document.body;
     
-    // تنظیم تم
     if (localStorage.getItem('theme') === 'light') {
         body.classList.add('light-theme');
         themeToggle.innerHTML = '<i class="fas fa-sun button-icon"></i>';
@@ -294,7 +370,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // تنظیم زبان
     const savedLang = localStorage.getItem('language') || 'en';
     setLanguage(savedLang);
     
