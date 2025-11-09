@@ -43,7 +43,15 @@ async function checkApiRateLimit() {
 }
 
 async function checkRepositories() {
-    const username = document.getElementById('username').value.trim();
+    let input = document.getElementById('username').value.trim();
+
+    let username = input
+        .replace(/^https?:\/\//i, '')
+        .replace(/^www\./i, '')
+        .replace(/^github\.com[/]?/i, '')
+        .replace(/\/+$/, '')
+        .split('/')[0];
+
     if (!username) {
         showError(translations[document.documentElement.lang || 'en'].noUsername);
         return;
@@ -109,7 +117,7 @@ async function checkRepositories() {
         
         setupSearchField(repos.length);
         
-        displayRepositories(repos, username); // پاس دادن username
+        displayRepositories(repos, username);
         
         downloadAllButton.style.display = 'flex';
         clearButton.style.display = 'flex';
@@ -135,7 +143,6 @@ function updateUserAvatar(avatarUrl) {
     }
 }
 
-// تابع جدید: نرمال‌سازی و تشخیص owner/repo
 function parseRepoFromInput(input) {
     if (!input) return null;
     
@@ -202,7 +209,6 @@ function filterRepositories(searchTerm) {
 
         let matches = false;
 
-        // جستجوی دقیق owner/repo
         if (parsed.owner && parsed.repo) {
             if (ownerName === parsed.owner && repoName === parsed.repo) {
                 matches = true;
@@ -210,12 +216,10 @@ function filterRepositories(searchTerm) {
                 exactMatchElement = item;
             }
         } else if (!parsed.owner && repoName === parsed.repo) {
-            // فقط نام ریپو
             matches = true;
             foundExactMatch = true;
             exactMatchElement = item;
         } else {
-            // جستجوی معمولی
             const term = searchTerm.toLowerCase();
             if (repoName.includes(term) || 
                 fullName.includes(term) ||
@@ -238,14 +242,12 @@ function filterRepositories(searchTerm) {
         }
     });
 
-    // حذف هایلایت بعد 2 ثانیه
     if (exactMatchElement) {
         setTimeout(() => {
             exactMatchElement.classList.remove('highlight-repo');
         }, 2000);
     }
 
-    // پیام نتیجه
     const noResultsMessage = document.getElementById('no-results-message');
     if (visibleCount === 0) {
         const msg = parsed.owner 
@@ -294,18 +296,16 @@ function displayRepositories(repos, username) {
                 <div class="repo-info">
                     <div class="repo-dates-langs">
                         <span class="repo-date">${translations[lang].created}: ${createDate} | ${translations[lang].updated}: ${updateDate}</span>
-                        <span class="repo-language"><i class="fas fa-code"></i> ${language}</span>
+                        <span class="repo-language"> ${language}</span>
                     </div>
                     <div class="repo-stats">
-                        <span title="${stars} stars"><i class="fas fa-star"></i> ${stars}</span>
-                        <span title="${forks} forks"><i class="fas fa-code-branch"></i> ${forks}</span>
+                        <span title="${stars} stars"> ${stars}</span>
+                        <span title="${forks} forks"> ${forks}</span>
                     </div>
                     <div class="repo-actions">
                         <a href="${repoUrl}" target="_blank" rel="noopener noreferrer" class="glow-button secondary" title="View repository">
-                            <i class="fas fa-code"></i>
                         </a>
                         <a href="${zipUrl}" class="glow-button secondary" title="Download ZIP">
-                            <i class="fas fa-download"></i>
                         </a>
                     </div>
                 </div>
